@@ -1,47 +1,75 @@
-﻿class Program
+﻿using System;
+using System.ComponentModel.Design;
+
+namespace atividade3
 {
-    static void Main()
+    class program
     {
-        int[][] notasAlunos = new int[3][];
-        notasAlunos[0] = new int[] { 70, 85, 90 }; 
-        notasAlunos[1] = new int[] { 60, 45 }; 
-        notasAlunos[2] = new int[] { 80, 95, 100, 88 }; 
-        Console.WriteLine("--- Estrutura de Notas ---");
-        for (int i = 0; i < notasAlunos.Length; i++)
+        public class Node
         {
-            Console.Write($"Aluno {i}: ");
-            for (int j = 0; j < notasAlunos[i].Length; j++)
+            public string NomeMusica;
+            public Node proximo;
+            public Node anterior;
+
+            public Node(string nome)
             {
-                Console.Write(notasAlunos[i][j] + " ");
+                NomeMusica = nome;
+                proximo = null;
+                anterior = null;
             }
-            Console.WriteLine();
         }
 
-        // 3. Testando a Busca Sequencial
-        Console.WriteLine("\nDigite uma nota para buscar:");
-        int notaBusca = int.Parse(Console.ReadLine());
-        bool encontrada = BuscaSequencial(notasAlunos, notaBusca);
-        if (encontrada)
-            Console.WriteLine($"A nota {notaBusca} foi encontrada no sistema.");
-        else
-            Console.WriteLine($"A nota {notaBusca} NÃO consta nos registros.");
-    }
-    static bool BuscaSequencial(int[][] matriz, int valorProcurado)
-    {
-        // Percorre cada linha (aluno)
-        for (int i = 0; i < matriz.Length; i++)
+        public class Playlist
         {
-            // Percorre cada coluna (notas do aluno)
-            for (int j = 0; j < matriz[i].Length; j++)
+            private Node inicio;
+            private Node fim;
+
+            public void adicionarmuscia(string nome)
             {
-                if (matriz[i][j] == valorProcurado)
+                Node novaMusica = new Node(nome);
+                if (inicio == null) 
                 {
-                    Console.WriteLine($"[DEBUG] Encontrado no Aluno {i}, Prova {j}");
-                    return true;
+                    inicio = novaMusica;
+                    fim = novaMusica;
+                }
+                else
+                {
+                    fim.proximo = novaMusica;
+                    novaMusica.anterior = fim;
+                    fim = novaMusica;
+                }
+                Console.WriteLine($"musica '{nome}' adicionada!");
+            }
+            public void tocarplaylist()
+            {
+                if(inicio == null)
+                {
+                    Console.WriteLine("a playlist esta vazia");
+                    return;
+                }
+                Node atual = inicio;
+                Console.WriteLine("\n--- tocando playlist ---");
+                while ( atual != null)
+                {
+                    Console.WriteLine($"tocando: {atual.NomeMusica}");
+                    atual = atual.proximo;
                 }
             }
         }
-        // Se percorreu tudo e não achou
-        return false;
+        public class Program
+        {
+            public static void Main(string[] args)
+            {
+                Playlist playlist = new Playlist();
+
+                playlist.adicionarmuscia("hotel claifornia");
+                playlist.adicionarmuscia("vicio");
+                playlist.adicionarmuscia("ego");
+
+                playlist.tocarplaylist();
+            }
+        }
+
+       
     }
 }
