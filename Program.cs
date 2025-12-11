@@ -1,50 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO; 
 class Program
 {
     static void Main()
     {
-        Stack<string> historicoAcoes = new Stack<string>(); 
-        Queue<string> filaImpressao = new Queue<string>(); 
-        while (true)
+        Console.WriteLine("Digite o caminho de uma pasta (ex: C:\\Windows\\Web ou . paratual):");
+    string caminhoInicial = Console.ReadLine();
+        if (caminhoInicial == ".") caminhoInicial = Directory.GetCurrentDirectory();
+        try
         {
-            Console.WriteLine("\n1. Escrever Texto (Add Ação)");
-            Console.WriteLine("2. Desfazer (Undo)");
-            Console.WriteLine("3. Enviar para Impressão");
-            Console.WriteLine("4. Imprimir Próximo (Impressora)");
-            Console.Write("Escolha: ");
-            string opcao = Console.ReadLine();
-            switch (opcao)
+            Console.WriteLine($"\nExplorando: {caminhoInicial}\n");
+            ExplorarDiretorios(caminhoInicial, 0);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Erro ao acessar pasta: " + ex.Message);
+        }
+    }
+    // Função Recursiva
+    static void ExplorarDiretorios(string caminho, int nivel)
+    {
+        try
+        {
+            string indentacao = new string('-', nivel * 2);
+            string[] arquivos = Directory.GetFiles(caminho);
+            foreach (string arquivo in arquivos)
             {
-                case "1":
-                    Console.Write("Digite a ação feita: ");
-                    string acao = Console.ReadLine();
-                    historicoAcoes.Push(acao); 
-                    Console.WriteLine("Ação registrada.");
-                    break;
-                case "2":
-                    if (historicoAcoes.Count > 0)
-                    {
-                        string desfeita = historicoAcoes.Pop(); 
-                        Console.WriteLine($"Desfeito: {desfeita}");
-                    }
-                    else Console.WriteLine("Nada para desfazer."); break;
-                case "3":
-                    Console.Write("Nome do documento: ");
-                    string doc = Console.ReadLine();
-                    filaImpressao.Enqueue(doc); 
-                    Console.WriteLine("Documento na fila.");
-                    break;
-                case "4":
-                    if (filaImpressao.Count > 0)
-                    {
-                        string imp = filaImpressao.Dequeue();
-                        Console.WriteLine($"Imprimindo: 📄 {imp}");
-                    }
-                    else Console.WriteLine("Fila vazia.");
-                    break;
+                Console.WriteLine($"{indentacao} 📄 {Path.GetFileName(arquivo)}");
             }
+            string[] subDiretorios = Directory.GetDirectories(caminho);
+            foreach (string dir in subDiretorios)
+            {
+                Console.WriteLine($"{indentacao} 📁 [{Path.GetFileName(dir)}]");
+                ExplorarDiretorios(dir, nivel + 1);
+            }
+        }
+        catch (UnauthorizedAccessException)
+        {
         }
     }
 }
-
