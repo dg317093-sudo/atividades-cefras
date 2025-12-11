@@ -1,75 +1,50 @@
 ﻿using System;
-using System.ComponentModel.Design;
-
-namespace atividade3
+using System.Collections.Generic;
+class Program
 {
-    class program
+    static void Main()
     {
-        public class Node
+        Stack<string> historicoAcoes = new Stack<string>(); 
+        Queue<string> filaImpressao = new Queue<string>(); 
+        while (true)
         {
-            public string NomeMusica;
-            public Node proximo;
-            public Node anterior;
-
-            public Node(string nome)
+            Console.WriteLine("\n1. Escrever Texto (Add Ação)");
+            Console.WriteLine("2. Desfazer (Undo)");
+            Console.WriteLine("3. Enviar para Impressão");
+            Console.WriteLine("4. Imprimir Próximo (Impressora)");
+            Console.Write("Escolha: ");
+            string opcao = Console.ReadLine();
+            switch (opcao)
             {
-                NomeMusica = nome;
-                proximo = null;
-                anterior = null;
+                case "1":
+                    Console.Write("Digite a ação feita: ");
+                    string acao = Console.ReadLine();
+                    historicoAcoes.Push(acao); 
+                    Console.WriteLine("Ação registrada.");
+                    break;
+                case "2":
+                    if (historicoAcoes.Count > 0)
+                    {
+                        string desfeita = historicoAcoes.Pop(); 
+                        Console.WriteLine($"Desfeito: {desfeita}");
+                    }
+                    else Console.WriteLine("Nada para desfazer."); break;
+                case "3":
+                    Console.Write("Nome do documento: ");
+                    string doc = Console.ReadLine();
+                    filaImpressao.Enqueue(doc); 
+                    Console.WriteLine("Documento na fila.");
+                    break;
+                case "4":
+                    if (filaImpressao.Count > 0)
+                    {
+                        string imp = filaImpressao.Dequeue();
+                        Console.WriteLine($"Imprimindo: 📄 {imp}");
+                    }
+                    else Console.WriteLine("Fila vazia.");
+                    break;
             }
         }
-
-        public class Playlist
-        {
-            private Node inicio;
-            private Node fim;
-
-            public void adicionarmuscia(string nome)
-            {
-                Node novaMusica = new Node(nome);
-                if (inicio == null) 
-                {
-                    inicio = novaMusica;
-                    fim = novaMusica;
-                }
-                else
-                {
-                    fim.proximo = novaMusica;
-                    novaMusica.anterior = fim;
-                    fim = novaMusica;
-                }
-                Console.WriteLine($"musica '{nome}' adicionada!");
-            }
-            public void tocarplaylist()
-            {
-                if(inicio == null)
-                {
-                    Console.WriteLine("a playlist esta vazia");
-                    return;
-                }
-                Node atual = inicio;
-                Console.WriteLine("\n--- tocando playlist ---");
-                while ( atual != null)
-                {
-                    Console.WriteLine($"tocando: {atual.NomeMusica}");
-                    atual = atual.proximo;
-                }
-            }
-        }
-        public class Program
-        {
-            public static void Main(string[] args)
-            {
-                Playlist playlist = new Playlist();
-
-                playlist.adicionarmuscia("hotel claifornia");
-                playlist.adicionarmuscia("vicio");
-                playlist.adicionarmuscia("ego");
-
-                playlist.tocarplaylist();
-            }
-        }
-
-       
     }
 }
+
