@@ -1,47 +1,66 @@
 ﻿using System;
-    using System.Collections.Generic;
-class TabelaHash
+using System.Collections.Generic;
+using System.Linq;
+
+public class Processo
 {
-    private List<string>[] tabela = new List<string>[5];
-    public TabelaHash()
+    public string Nome;
+    public int Prioridade; 
+
+    public Processo(string nome, int prioridade)
     {
-        for (int i = 0; i < tabela.Length; i++)
-            tabela[i] = new List<string>();
-    }
-    private int FuncaoHash(string chave)
-    {
-        return chave.Length % 5;
-    }
-    public void Adicionar(string palavra)
-    {
-        int indice = FuncaoHash(palavra);
-        tabela[indice].Add(palavra);
-        Console.WriteLine($"Palavra '{palavra}' armazenada no índice {indice}.");
-    }
-    public void ExibirTabela()
-    {
-        Console.WriteLine("\n--- Estado da Tabela Hash ---");
-        for (int i = 0; i < tabela.Length; i++)
-        {
-            Console.Write($"Índice {i}: ");
-            foreach (var item in tabela[i])
-            {
-                Console.Write($"[{item}] -> ");
-            }
-            Console.WriteLine("null");
-        }
+        Nome = nome;
+        Prioridade = prioridade;
     }
 }
+
+public class FilaPrioridade
+{
+    private List<Processo> fila = new List<Processo>();
+
+    public void Enfileirar(Processo processo)
+    {
+        fila.Add(processo);
+
+        fila = fila.OrderByDescending(p => p.Prioridade).ToList();
+    }
+
+    public Processo Desenfileirar()
+    {
+        if (fila.Count == 0)
+            return null;
+
+        Processo processo = fila[0];
+        fila.RemoveAt(0);
+        return processo;
+    }
+
+    public bool EstaVazia()
+    {
+        return fila.Count == 0;
+    }
+}
+
 class Program
 {
     static void Main()
     {
-        TabelaHash dicionario = new TabelaHash();
+        FilaPrioridade cpu = new FilaPrioridade();
 
-        dicionario.Adicionar("Cat"); 
-        dicionario.Adicionar("Dog"); 
-        dicionario.Adicionar("Bird");
-        dicionario.Adicionar("Ox"); 
-        dicionario.ExibirTabela();
+        cpu.Enfileirar(new Processo("Sistema - Atualização", 10));
+        cpu.Enfileirar(new Processo("Usuário - Navegador", 3));
+        cpu.Enfileirar(new Processo("Sistema - Antivírus", 8));
+        cpu.Enfileirar(new Processo("Usuário - Jogo", 2));
+        cpu.Enfileirar(new Processo("Usuário - Editor de Texto", 4));
+
+        Console.WriteLine("=== Iniciando Simulação da CPU ===\n");
+
+        while (!cpu.EstaVazia())
+        {
+            Processo atual = cpu.Desenfileirar();
+            Console.WriteLine($"Executando processo: {atual.Nome} | Prioridade: {atual.Prioridade}");
+        }
+
+        Console.WriteLine("\n=== Todos os processos foram executados ===");
     }
 }
