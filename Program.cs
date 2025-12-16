@@ -1,66 +1,79 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-public class Processo
-{
-    public string Nome;
-    public int Prioridade; 
-
-    public Processo(string nome, int prioridade)
-    {
-        Nome = nome;
-        Prioridade = prioridade;
-    }
-}
-
-public class FilaPrioridade
-{
-    private List<Processo> fila = new List<Processo>();
-
-    public void Enfileirar(Processo processo)
-    {
-        fila.Add(processo);
-
-        fila = fila.OrderByDescending(p => p.Prioridade).ToList();
-    }
-
-    public Processo Desenfileirar()
-    {
-        if (fila.Count == 0)
-            return null;
-
-        Processo processo = fila[0];
-        fila.RemoveAt(0);
-        return processo;
-    }
-
-    public bool EstaVazia()
-    {
-        return fila.Count == 0;
-    }
-}
-
 class Program
 {
     static void Main()
     {
-        FilaPrioridade cpu = new FilaPrioridade();
-
-        cpu.Enfileirar(new Processo("Sistema - Atualização", 10));
-        cpu.Enfileirar(new Processo("Usuário - Navegador", 3));
-        cpu.Enfileirar(new Processo("Sistema - Antivírus", 8));
-        cpu.Enfileirar(new Processo("Usuário - Jogo", 2));
-        cpu.Enfileirar(new Processo("Usuário - Editor de Texto", 4));
-
-        Console.WriteLine("=== Iniciando Simulação da CPU ===\n");
-
-        while (!cpu.EstaVazia())
+        // Vetor base desordenado (Cópia para cada método para garantir igualdade no teste)
+        int[] dadosOriginais = { 72, 54, 59, 30, 31, 78, 2, 77, 82, 72 };
+        Console.WriteLine("Vetor Original: " + string.Join(", ", dadosOriginais));
+        Console.WriteLine("--------------------------------------------------");
+        // Teste Bubble Sort
+        int[] vetorBubble = (int[])dadosOriginais.Clone();
+        BubbleSort(vetorBubble);
+        Console.WriteLine("Bubble Sort Resultado: " + string.Join(", ", vetorBubble));
+        // Teste Selection Sort
+        int[] vetorSelection = (int[])dadosOriginais.Clone();
+        SelectionSort(vetorSelection);
+        Console.WriteLine("Selection Sort Resultado: " + string.Join(", ", vetorSelection));
+        // Teste Insertion Sort
+        int[] vetorInsertion = (int[])dadosOriginais.Clone();
+        InsertionSort(vetorInsertion);
+        Console.WriteLine("Insertion Sort Resultado: " + string.Join(", ", vetorInsertion));
+    }
+    static void BubbleSort(int[] arr)
+    {
+        int temp;
+        // Loop externo: define o limite superior que vai diminuindo
+        for (int outer = arr.Length - 1; outer >= 1; outer--)
         {
-            Processo atual = cpu.Desenfileirar();
-            Console.WriteLine($"Executando processo: {atual.Nome} | Prioridade: {atual.Prioridade}");
+            // Loop interno: compara pares adjacentes
+            for (int inner = 0; inner <= outer - 1; inner++)
+            {
+                if (arr[inner] > arr[inner + 1])
+                {
+                    // Troca (Swap)
+                    temp = arr[inner];
+                    arr[inner] = arr[inner + 1];
+                    arr[inner + 1] = temp;
+                }
+            }
         }
+    }
 
-        Console.WriteLine("\n=== Todos os processos foram executados ===");
+    static void SelectionSort(int[] arr)
+    {
+        int min, temp;
+        for (int outer = 0; outer < arr.Length; outer++)
+        {
+            min = outer; // Assume que o atual é o menor
+
+            // Procura o verdadeiro menor no restante do vetor
+            for (int inner = outer + 1; inner < arr.Length; inner++)
+            {
+                if (arr[inner] < arr[min])
+                {
+                    min = inner;
+                }
+            }
+            temp = arr[outer];
+            arr[outer] = arr[min];
+            arr[min] = temp;
+        }
+    }
+    static void InsertionSort(int[] arr)
+    {
+        int inner, temp;
+        for (int outer = 1; outer < arr.Length; outer++)
+        {
+            temp = arr[outer]; 
+            inner = outer;
+            
+            while (inner > 0 && arr[inner - 1] >= temp)
+            {
+                arr[inner] = arr[inner - 1];
+                inner -= 1;
+            }
+            arr[inner] = temp;
+        }
     }
 }
