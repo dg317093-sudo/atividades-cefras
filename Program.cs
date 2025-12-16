@@ -1,39 +1,34 @@
 ﻿using System;
-public class Node
+    using System.Collections.Generic;
+class TabelaHash
 {
-    public int Valor;
-    public Node Esquerda;
-    public Node Direita;
-    public Node(int valor)
+    private List<string>[] tabela = new List<string>[5];
+    public TabelaHash()
     {
-        Valor = valor;
-        Esquerda = null;
-        Direita = null;
+        for (int i = 0; i < tabela.Length; i++)
+            tabela[i] = new List<string>();
     }
-}
-public class ArvoreBinaria
-{
-    public Node Raiz;
-    public void Inserir(int valor)
+    private int FuncaoHash(string chave)
     {
-        Raiz = InserirRecursivo(Raiz, valor);
+        return chave.Length % 5;
     }
-    private Node InserirRecursivo(Node atual, int valor)
+    public void Adicionar(string palavra)
     {
-        if (atual == null) return new Node(valor); // Lugar vago encontrado
-        if (valor < atual.Valor)
-            atual.Esquerda = InserirRecursivo(atual.Esquerda, valor); // Vai pra esquerda
-        else if (valor > atual.Valor)
-            atual.Direita = InserirRecursivo(atual.Direita, valor); // Vai pra direita
-        return atual;
+        int indice = FuncaoHash(palavra);
+        tabela[indice].Add(palavra);
+        Console.WriteLine($"Palavra '{palavra}' armazenada no índice {indice}.");
     }
-    public void ImprimirEmOrdem(Node atual)
+    public void ExibirTabela()
     {
-        if (atual != null)
+        Console.WriteLine("\n--- Estado da Tabela Hash ---");
+        for (int i = 0; i < tabela.Length; i++)
         {
-            ImprimirEmOrdem(atual.Esquerda);
-            Console.Write(atual.Valor + " ");
-            ImprimirEmOrdem(atual.Direita);
+            Console.Write($"Índice {i}: ");
+            foreach (var item in tabela[i])
+            {
+                Console.Write($"[{item}] -> ");
+            }
+            Console.WriteLine("null");
         }
     }
 }
@@ -41,13 +36,12 @@ class Program
 {
     static void Main()
     {
-        ArvoreBinaria arvore = new ArvoreBinaria();
-        int[] numeros = { 45, 10, 7, 90, 12, 50, 13, 39, 57 };
+        TabelaHash dicionario = new TabelaHash();
 
-        Console.WriteLine("Inserindo: " + string.Join(", ", numeros));
-        foreach (int n in numeros) arvore.Inserir(n);
-        Console.Write("Árvore Ordenada (Em-Ordem): ");
-        arvore.ImprimirEmOrdem(arvore.Raiz);
-        Console.WriteLine();
+        dicionario.Adicionar("Cat"); 
+        dicionario.Adicionar("Dog"); 
+        dicionario.Adicionar("Bird");
+        dicionario.Adicionar("Ox"); 
+        dicionario.ExibirTabela();
     }
 }
